@@ -1,0 +1,3 @@
+0 fundo
+1 controle
+2 mao

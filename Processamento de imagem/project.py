@@ -7,7 +7,7 @@ data = np.ndarray(shape=(1, 224, 224, 3), dtype = np.float32)
 
 cap = cv2.VideoCapture(0)
 
-classes = ['lavinia', 'julia']
+classes = ['fundo', 'controle', 'mao']
 
 while True:
     success,img = cap.read()
@@ -21,6 +21,7 @@ while True:
 
     cv2.putText(img, str(classes[indexVal]),(50,50), cv2.FONT_HERSHEY_COMPLEX, 2, (0,255,0), 2)
     print(classes[indexVal])
-
+    classe = classes[indexVal]
     cv2.imshow('img',img)
     cv2.waitKey(1)
+    
