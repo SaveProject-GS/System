@@ -30,6 +30,7 @@ if not found_port:
 
 serialInst.baudrate = 9600
 serialInst.port = use
+serialInst.timeout = 5  # added line: set timeout to 5 seconds
 serialInst.open()
 
 # Carregar o modelo de aprendizado de máquina
@@ -57,16 +58,29 @@ while True:
     print(classes[indexVal])
 
     # Enviar comando ao Arduino
-    if classes[indexVal] == 'controle':
-        serialInst.write('ON'.encode('utf-8'))
-        print("Comando enviado: ON")
-    else:
-        serialInst.write('OFF'.encode('utf-8'))
-        print("Comando enviado: OFF")
+    try:
+        if classes[indexVal] == 'controle':
+            serialInst.reset_output_buffer()  # added line: reset output buffer
+            serialInst.write('ON'.encode('utf-8'))
+            serialInst.flush()  # added line: flush pending data
+            print("Comando enviado: ON")
+        else:
+            serialInst.reset_output_buffer()  # added line: reset output buffer
+            serialInst.write('OFF'.encode('utf-8'))
+            serialInst.flush()  # added line: flush pending data
+            print("Comando enviado: OFF")
+    except serial.SerialTimeoutException:
+        print("Erro de timeout ao enviar comando ao Arduino!")
+        serialInst.close()
+        break
 
     # Exibir imagem com texto
     cv2.putText(img, str(classes[indexVal]),(50,50), cv2.FONT_HERSHEY_COMPLEX, 2, (0,255,0), 2)
     cv2.imshow('img',img)
+
+    # Check for the 'q' key to exit the loop
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
     time.sleep(1)
 
