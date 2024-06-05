@@ -24,15 +24,15 @@ void loop() {
     Serial.println(command);
 
     if (command == "ON") {
-      // Ativa o LED verde e o Servo motor caso o comando do serial seja ON
-      digitalWrite(greenPin, HIGH);
-      digitalWrite(redPin, LOW);
-      myServo.write(180); // Gira o servo em 180 graus
-      delay(5000);
-      } else if (command == "OFF") {
-        // Ativa o LED vermelho e retorna o Servo motor para o estado original 
-      digitalWrite(greenPin, LOW);
+      // Ativa o LED vermelho e o Servo motor caso o comando do serial seja ON
       digitalWrite(redPin, HIGH);
+      digitalWrite(greenPin, LOW);
+      myServo.write(140); // Gira o servo nos graus desejados
+      delay(2000);
+      } else if (command == "OFF") {
+        // Ativa o LED verde e retorna o Servo motor para o estado original 
+      digitalWrite(redPin, LOW);
+      digitalWrite(greenPin, HIGH);
       myServo.write(0); // Gira o servo para 0 graus
       } else {
       // Desliga os dois LEDs caso seja recebido um comando desconhecido  
