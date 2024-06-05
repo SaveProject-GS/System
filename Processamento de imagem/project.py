@@ -1,15 +1,16 @@
-import serial
-import serial.tools.list_ports
-import cv2
-from keras.models import load_model
+import serial # Bibliotera para comunicação com o Arduino, necessário pip install serial
+import serial.tools.list_ports # Lista das portas do dispositivo
+import cv2 # Biblioteca para visualização da câmera
+from keras.models import load_model # Necessário para interpretação dos modelos de Machine Learning, requer pip install tensorflow
 import numpy as np
-import time
+import time # Necessário para regulagem da taxa de fotos para o processamento
 
 # Inicialização do seriado e câmera
 ports = serial.tools.list_ports.comports()
 serialInst = serial.Serial()
 portList = []
 
+# Lista as portas USB com dispositivos conectados
 for one in ports:
     portList.append(str(one))
     print(str(one))
@@ -17,6 +18,7 @@ for one in ports:
 com = input('Selecione a porta para o Arduino pelo número: ')
 found_port = False
 
+# Verifica se a porta escolhida pelo usuário possui algum dispositivo conectado
 for i in range(len(portList)):
     if portList[i].startswith('COM' + str(com)):
         use = 'COM' + str(com)
@@ -28,16 +30,16 @@ if not found_port:
     print("Porta não encontrada!")
     exit()
 
-serialInst.baudrate = 9600
+serialInst.baudrate = 9600 # Deve ser o mesmo valor iniciado no arduino
 serialInst.port = use
-serialInst.timeout = 5  # added line: set timeout to 5 seconds
+serialInst.timeout = 5  # Evita erros de timeout por 5 segundos
 serialInst.open()
 
-# Carregar o modelo de aprendizado de máquina
-model = load_model('keras_model.h5')
-classes = ['fundo', 'controle', 'ao']
+# Carregar o modelo de Machine Learning
+model = load_model('keras_model.h5') # Caminho relativo até o arquivo .h5
+classes = ['fundo', 'controle', 'ao'] # Deve seguir a mesma ordem do arquivo labels.txt
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0) # Inicia a visualização pela câmera/webcam, número padrão 0
 
 while True:
     # Leitura da imagem da câmera
@@ -46,6 +48,7 @@ while True:
         print("Erro ao ler a imagem da câmera!")
         break
 
+    # Define as dimensões da câmera
     imgS = cv2.resize(img, (224, 224))
     image_array = np.asarray(imgS)
     normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
@@ -55,36 +58,33 @@ while True:
     # Previsão do modelo
     prediction = model.predict(data)
     indexVal = np.argmax(prediction)
+    # print(prediction) Descomente essa linha para ver as porcentagens de cada um dos labels
     print(classes[indexVal])
 
     # Enviar comando ao Arduino
     try:
         if classes[indexVal] == 'controle':
-            serialInst.reset_output_buffer()  # added line: reset output buffer
+            serialInst.reset_output_buffer()  # Reset output buffer evita erros de envio via serial
             serialInst.write('ON'.encode('utf-8'))
-            serialInst.flush()  # added line: flush pending data
+            serialInst.flush()  # Flush pending data evita acúmulo de dados desnecessários via serial
             print("Comando enviado: ON")
         else:
-            serialInst.reset_output_buffer()  # added line: reset output buffer
+            serialInst.reset_output_buffer()  
             serialInst.write('OFF'.encode('utf-8'))
-            serialInst.flush()  # added line: flush pending data
+            serialInst.flush()  
             print("Comando enviado: OFF")
     except serial.SerialTimeoutException:
         print("Erro de timeout ao enviar comando ao Arduino!")
         serialInst.close()
         break
 
-    # Exibir imagem com texto
+    # Exibe imagem com texto
     cv2.putText(img, str(classes[indexVal]),(50,50), cv2.FONT_HERSHEY_COMPLEX, 2, (0,255,0), 2)
     cv2.imshow('img',img)
 
-    # Check for the 'q' key to exit the loop
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    time.sleep(1) # Tempo mínimo suportado pelo Arduino Uno R3 em segundos, pode ser menor dependendo do processamento do microcontrolador
 
-    time.sleep(1)
-
-# Fechar a câmera e o seriado
+# Fecha a câmera e o seriado
 cap.release()
 cv2.destroyAllWindows()
 serialInst.close()
