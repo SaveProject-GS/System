@@ -37,7 +37,7 @@ serialInst.open()
 
 # Carregar o modelo de Machine Learning
 model = load_model('keras_model.h5') # Caminho relativo até o arquivo .h5
-classes = ['fundo', 'controle', 'ao'] # Deve seguir a mesma ordem do arquivo labels.txt
+classes = ['caminho', 'vermelho', 'verde'] # Deve seguir a mesma ordem do arquivo labels.txt
 
 cap = cv2.VideoCapture(0) # Inicia a visualização pela câmera/webcam, número padrão 0
 
@@ -58,12 +58,12 @@ while True:
     # Previsão do modelo
     prediction = model.predict(data)
     indexVal = np.argmax(prediction)
-    # print(prediction) Descomente essa linha para ver as porcentagens de cada um dos labels
+    # print(prediction) Descomente essa linha para ve,r as porcentagens de cada um dos labels
     print(classes[indexVal])
 
     # Enviar comando ao Arduino
     try:
-        if classes[indexVal] == 'controle':
+        if classes[indexVal] == 'vermelho':
             serialInst.reset_output_buffer()  # Reset output buffer evita erros de envio via serial
             serialInst.write('ON'.encode('utf-8'))
             serialInst.flush()  # Flush pending data evita acúmulo de dados desnecessários via serial
