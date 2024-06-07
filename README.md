@@ -10,6 +10,8 @@ Integrantes:
 Projeto tinkercad: https://www.tinkercad.com/things/6CxT8PXSaCg-servo-motor-e-leds 
 (Devido às limitações do tinkercad, um botão foi utilizado para representar o processamento de imagem)
 
+Vídeo demonstração: https://youtu.be/-aAxORzMVLo
+
 Requisitos de sistema:
 - Python entre as versões 3.7 e 3.9 devido à compatibilidade com o Tensorflow.
 - Baixar biblioteca Tensorflow.
