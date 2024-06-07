@@ -17,7 +17,8 @@ Requisitos de sistema:
 
 Utilização:
 - Faça o upload do arquivo "Controle_de_arduino.ino" Para a placa seguindo a numeração de cada uma das portas assim como no modelo do tinkercad, com excessão do botão que não precisa ser utilizado.
-- Mantenha o cabo USB conectado ao dispositivo durante toda a execução
+- Mantenha o cabo USB conectado ao dispositivo durante toda a execução.
+- Abra a pasta "Processamento_de_imagem" no Visual Studio Code para que não precise ser feitas alterações no código, caso você queira abrir só o "project.py" deverá substituir o parâmetro de "load_model()" na linha 39 pelo caminho do arquivo no dispositivo.
 - Execute o programa "project.py" via terminal, pois será necessário escolher a porta em que o Arduino está conectado.
 - Escolha a porta em que o Arduino esá conectado
 - Os modelos no repositório são os mesmos utilizados no video demonstração, caso queira testar em casa, utilize o Teacheble Machine(https://teachablemachine.withgoogle.com/train/image), faça o download do modelo e substitua os arquivos "labels.txt" e "kera_model.h5" da pasta "Processamento_de_imagem" pelos novos arquivos.
